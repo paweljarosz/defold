@@ -1502,10 +1502,7 @@ namespace dmScript
         }
         else
         {
-            if (L)
-                luaL_error(L, "Failed to unregister callback (it was not registered)");
-            else
-                dmLogWarning("Failed to unregister callback (it was not registered)");
+            dmLogWarning("Failed to unregister callback (it was not registered)");
         }
     }
 
