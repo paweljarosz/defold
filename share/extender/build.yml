@@ -74,14 +74,15 @@ platforms:
   common:
     env:
       PYTHONPATH:    '{{dynamo_home}}/lib/python:{{dynamo_home}}/ext/lib/python:{{dynamo_home}}/ext/lib/python/protobuf-2.3.0-py2.5.egg'
+      GCC:           'clang++'
     context:
       protoIncludes:    ['{{dynamo_home}}/share/proto', '{{dynamo_home}}/ext/include']
 
       # C++
-      cxxFlags:         ''
-      cxxShFlags:       ''
-      cxxLinkFlags:     ''
-      cxxLinkShFlags:   ''
+      cxxFlags:         []
+      cxxShFlags:       []
+      cxxLinkFlags:     []
+      cxxLinkShFlags:   []
       cxxLibs:          []
       cxxShLibs:        [] #"dlib_shared" # not shared libs, but libs used for linking a shared library
       # Java
@@ -95,10 +96,10 @@ platforms:
     protoPipelineOutputRe:  '*.pb.h|*.pb.cc|*_pb2.py'
 
     # C++
-    compileCmdCXX:      'clang++ -c {{#defines}}-D{{{.}}} {{/defines}} {{#cxxFlags}}{{{.}}} {{/cxxFlags}} {{#flags}}{{{.}}} {{/flags}} {{#ext.includes}}-I{{{.}}} {{/ext.includes}} {{#ext.frameworkPaths}}-F{{{.}}} {{/ext.frameworkPaths}} {{#includes}}-I{{{.}}} {{/includes}} {{src}} -o{{tgt}}'
-    compileCmdCXXSh:    'clang++ -c {{#defines}}-D{{{.}}} {{/defines}} {{#cxxShFlags}}{{{.}}} {{/cxxShFlags}} {{#flags}}{{{.}}} {{/flags}} {{#ext.includes}}-I{{{.}}} {{/ext.includes}} {{#ext.frameworkPaths}}-F{{{.}}} {{/ext.frameworkPaths}} {{#includes}}-I{{{.}}} {{/includes}} {{src}} -o{{tgt}}'
-    linkCmdCXX:         'clang++ -o {{tgt}} {{#cxxLinkFlags}}{{{.}}} {{/cxxLinkFlags}} {{#linkFlags}}{{{.}}} {{/linkFlags}} {{#ext.libPaths}}-L{{{.}}} {{/ext.libPaths}} {{#libPaths}}-L{{{.}}} {{/libPaths}} {{#libs}}-l{{{.}}} {{/libs}} {{#ext.libs}}-l{{{.}}} {{/ext.libs}} {{#engineLibs}}-l{{{.}}} {{/engineLibs}} {{#ext.dynamicLibs}}-l{{{.}}} {{/ext.dynamicLibs}} {{#dynamicLibs}}-l{{{.}}} {{/dynamicLibs}} {{#ext.frameworkPaths}}-F{{{.}}} {{/ext.frameworkPaths}} {{#ext.frameworks}}-framework {{{.}}} {{/ext.frameworks}} {{#frameworks}}-framework {{{.}}} {{/frameworks}} {{#src}}{{{.}}} {{/src}}'
-    linkCmdCXXSh:       'clang++ -o {{tgt}} {{#cxxLinkShFlags}}{{{.}}} {{/cxxLinkShFlags}} {{#linkFlags}}{{{.}}} {{/linkFlags}} {{#ext.libPaths}}-L{{{.}}} {{/ext.libPaths}} {{#libPaths}}-L{{{.}}} {{/libPaths}} {{#libs}}-l{{{.}}} {{/libs}} {{#ext.libs}}-l{{{.}}} {{/ext.libs}} {{#engineLibs}}-l{{{.}}} {{/engineLibs}} {{#ext.dynamicLibs}}-l{{{.}}} {{/ext.dynamicLibs}} {{#dynamicLibs}}-l{{{.}}} {{/dynamicLibs}} {{#ext.frameworkPaths}}-F{{{.}}} {{/ext.frameworkPaths}} {{#ext.frameworks}}-framework {{{.}}} {{/ext.frameworks}} {{#frameworks}}-framework {{{.}}} {{/frameworks}} {{#src}}{{{.}}} {{/src}}'
+    compileCmdCXX:      '{{env.GCC}} -c {{#systemIncludes}}-isystem {{{.}}} {{/systemIncludes}} {{#defines}}-D{{{.}}} {{/defines}} {{#cxxFlags}}{{{.}}} {{/cxxFlags}} {{#flags}}{{{.}}} {{/flags}} {{#ext.includes}}-I{{{.}}} {{/ext.includes}} {{#ext.frameworkPaths}}-F{{{.}}} {{/ext.frameworkPaths}} {{#includes}}-I{{{.}}} {{/includes}} {{src}} -o{{tgt}}'
+    compileCmdCXXSh:    '{{env.GCC}} -c {{#systemIncludes}}-isystem {{{.}}} {{/systemIncludes}} {{#defines}}-D{{{.}}} {{/defines}} {{#cxxShFlags}}{{{.}}} {{/cxxShFlags}} {{#flags}}{{{.}}} {{/flags}} {{#ext.includes}}-I{{{.}}} {{/ext.includes}} {{#ext.frameworkPaths}}-F{{{.}}} {{/ext.frameworkPaths}} {{#includes}}-I{{{.}}} {{/includes}} {{src}} -o{{tgt}}'
+    linkCmdCXX:         '{{env.GCC}} -o {{tgt}} {{#cxxLinkFlags}}{{{.}}} {{/cxxLinkFlags}} {{#linkFlags}}{{{.}}} {{/linkFlags}} {{#ext.libPaths}}-L{{{.}}} {{/ext.libPaths}} {{#libPaths}}-L{{{.}}} {{/libPaths}} {{#libs}}-l{{{.}}} {{/libs}} {{#ext.libs}}-l{{{.}}} {{/ext.libs}} {{#engineLibs}}-l{{{.}}} {{/engineLibs}} {{#ext.dynamicLibs}}-l{{{.}}} {{/ext.dynamicLibs}} {{#dynamicLibs}}-l{{{.}}} {{/dynamicLibs}} {{#ext.frameworkPaths}}-F{{{.}}} {{/ext.frameworkPaths}} {{#ext.frameworks}}-framework {{{.}}} {{/ext.frameworks}} {{#frameworks}}-framework {{{.}}} {{/frameworks}} {{#src}}{{{.}}} {{/src}}'
+    linkCmdCXXSh:       '{{env.GCC}} -shared -o {{tgt}} {{#cxxLinkShFlags}}{{{.}}} {{/cxxLinkShFlags}} {{#ext.libPaths}}-L{{{.}}} {{/ext.libPaths}} {{#libPaths}}-L{{{.}}} {{/libPaths}} {{#libs}}-l{{{.}}} {{/libs}} {{#ext.libs}}-l{{{.}}} {{/ext.libs}} {{#engineLibs}}-l{{{.}}} {{/engineLibs}} {{#ext.dynamicLibs}}-l{{{.}}} {{/ext.dynamicLibs}} {{#dynamicLibs}}-l{{{.}}} {{/dynamicLibs}} {{#src}}{{{.}}} {{/src}}'
 
     # Java
     javaSourceRe:   '(?i).+(\.java)$'
@@ -123,7 +124,10 @@ platforms:
         systemIncludes:    ["{{env.SYSROOT}}/usr/include/c++/v1"]
         flags:      ["-fno-exceptions", "-fvisibility=hidden"]
         linkFlags:  ["-Wl,-rpath,@loader_path/.", "-Wl,-U,_objc_loadClassref"]
-        libs:       ['clang_rt.osx']
+        libs:        ['clang_rt.osx']
+        cxxShFlags:     ['-arch', 'x86_64', '-target', 'x86_64-apple-darwin19', '-m64', '-O2', '-g', '-stdlib=libc++', '-isysroot {{env.SYSROOT}}', '-nostdinc++', '-mmacosx-version-min=10.7']
+        cxxShLibs:      []
+        cxxLinkShFlags: ['-arch', 'x86_64', '-target', 'x86_64-apple-darwin19', '-m64', '-O2', '-g', '-stdlib=libc++', '-isysroot {{env.SYSROOT}}', '-mmacosx-version-min=10.7']
         dynamicLibs: []
         symbols:    ["AudioDecoderTremolo"]
 
@@ -133,6 +137,7 @@ platforms:
     stlibRe: 'lib(.+).a'
     sourceRe: '(?i).*(\.cpp|\.c|\.cc|\.cxx|\.c\+\+|.mm|.m)'
     writeLibPattern: 'lib%s.a'
+    writeShLibPattern: 'lib%s.dylib'
     writeExePattern: 'dmengine'
     symbolsPattern: '.*dSYM'
     zipContentPattern: 'dmengine'
@@ -471,6 +476,7 @@ platforms:
     stlibRe:        '(.+).lib'
     sourceRe:       '(?i).*(\.cpp|\.c|\.cc|\.cxx|\.c\+\+)'
     writeLibPattern: '%s.lib'
+    writeShLibPattern: '%s.dll'
     writeExePattern: 'dmengine.exe'
     zipContentPattern: 'dmengine.exe'
     symbolsPattern:  '.*pdb'
@@ -537,6 +543,7 @@ platforms:
     stlibRe:        'lib(.+).a'
     sourceRe:       '(?i).*(\.cpp|\.c|\.cc|\.cxx|\.c\+\+)'
     writeLibPattern: 'lib%s.a'
+    writeShLibPattern: 'lib%s.so'
     writeExePattern: 'dmengine'
     zipContentPattern: 'dmengine'
     allowedLibs:    ["(\\w[\\w\\.+-]+)"]
