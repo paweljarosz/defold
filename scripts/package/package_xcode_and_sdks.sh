@@ -52,7 +52,7 @@ function make_archive() {
 		fi
 
 		echo EXTRA ARGS: $@
-		echo tar ${tarflags} $@ -f ${archive} ${src}
+		echo COPYFILE_DISABLE=1 tar ${tarflags} $@ -f ${archive} ${src}
 		tar ${tarflags} $@ -f ${archive} ${src}
 	else
 		echo "Found existing $archive"
