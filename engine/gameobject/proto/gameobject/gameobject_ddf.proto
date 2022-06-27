@@ -34,8 +34,9 @@ message ComponentDesc
     required string component = 2 [(resource) = true];
     optional dmMath.Point3  position    = 3;
     optional dmMath.Quat    rotation    = 4;
-    repeated PropertyDesc properties    = 5;
-    optional dmPropertiesDDF.PropertyDeclarations property_decls = 6;
+    optional dmMath.Vector3 scale       = 5;
+    repeated PropertyDesc properties    = 6;
+    optional dmPropertiesDDF.PropertyDeclarations property_decls = 7;
 }
 
 message EmbeddedComponentDesc

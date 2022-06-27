@@ -372,6 +372,7 @@ namespace dmGameSystem
         memset(component, 0, sizeof(SpriteComponent));
         component->m_Instance = params.m_Instance;
         component->m_Position = Vector3(params.m_Position);
+        component->m_Scale = params.m_Scale;
         component->m_Rotation = params.m_Rotation;
         SpriteResource* resource = (SpriteResource*)params.m_Resource;
         component->m_Resource = resource;
@@ -694,7 +695,7 @@ namespace dmGameSystem
             for (uint32_t i = 0; i < n; ++i)
             {
                 SpriteComponent* c = &components[i];
-                Matrix4 local = dmTransform::ToMatrix4(dmTransform::Transform(c->m_Position, c->m_Rotation, 1.0f));
+                Matrix4 local = dmTransform::ToMatrix4(dmTransform::Transform(c->m_Position, c->m_Rotation, c->m_Scale));
                 Matrix4 world = dmGameObject::GetWorldMatrix(c->m_Instance);
                 Vector3 size( c->m_Size.getX() * c->m_Scale.getX(), c->m_Size.getY() * c->m_Scale.getY(), 1);
                 c->m_World = appendScale(world * local, size);
@@ -704,7 +705,7 @@ namespace dmGameSystem
             for (uint32_t i = 0; i < n; ++i)
             {
                 SpriteComponent* c = &components[i];
-                Matrix4 local = dmTransform::ToMatrix4(dmTransform::Transform(c->m_Position, c->m_Rotation, 1.0f));
+                Matrix4 local = dmTransform::ToMatrix4(dmTransform::Transform(c->m_Position, c->m_Rotation, c->m_Scale));
                 Matrix4 world = dmGameObject::GetWorldMatrix(c->m_Instance);
                 Matrix4 w = dmTransform::MulNoScaleZ(world, local);
                 Vector3 size( c->m_Size.getX() * c->m_Scale.getX(), c->m_Size.getY() * c->m_Scale.getY(), 1);

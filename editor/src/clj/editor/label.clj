@@ -376,5 +376,5 @@
     :icon label-icon
     :view-types [:scene :text]
     :tags #{:component}
-    :tag-opts {:component {:transform-properties #{:position :rotation}}}
+    :tag-opts {:component {:transform-properties #{:position :rotation :scale}}}
     :label "Label"))
